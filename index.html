@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="Tulipico.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Alkatra&family=Great+Vibes&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik+Iso&family=Tourney:wght@100&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Nabla&family=Pacifico&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=La+Belle+Aurore&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap');
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            background-image: url("night.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+        }
+
+        .heart {
+            font-size: 70px;
+            color: rgb(255, 0, 0);
+            animation: heartbeat 1s infinite alternate, glow 1.5s infinite alternate;
+            margin-top: -40px;
+        }
+
+        @keyframes heartbeat {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
+        .message {
+            font-size: 35px;
+            font-style: bold;
+            margin: 20px;
+            color: #ffffff;
+            position: relative;
+            z-index: 10;
+            padding: 10px;
+            border-radius: 10px;
+            font-family: Caveat;
+        }
+
+        .letter-container p {
+            opacity: 0;
+            animation: fadeIn 0.6s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .letter-container {
+            display: none;
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            max-width: 900px;
+            height: 80vh;
+            background: #e5cebd;
+            border-radius: 15px;
+            padding: 70px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            font-family: "La Belle Aurore", cursive;
+            font-size: 20px;
+            overflow-y: auto;
+            color: #222;
+            z-index: 20;
+            border: 2px dashed #f6b4c2;
+            box-shadow: 0 0 25px rgba(255, 182, 193, 0.5);
+        }
+   
+        @keyframes floatHearts {
+            0% { transform: translateY(0) rotate(0deg); opacity: 10; }
+            100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 20px;
+            color: rgb(145, 0, 17);
+            animation: floatHearts 5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        button {
+            color: rgb(255, 255, 255);
+            background-color: rgba(240, 2, 58, 0.634);
+            width: 175px;
+            height: 50px;
+            font-family: VT323;
+            font-size: 20px;
+            border-style: groove;
+            border-color: rgba(193, 37, 76, 0);
+            border-radius: 1cm;
+        }
+
+        button:hover {
+            background-color: #bf1b44cf;
+        }
+
+        .tulip {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0;
+            animation: bloom 3s ease-in-out forwards;
+        }
+
+        @keyframes bloom {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 0.8; transform: scale(4.3); }
+        }
+
+        #restart {
+           justify-content:left;
+            background-color: #45894700;
+        }
+
+        #restart:hover {
+            background-color: #45a04900;
+        }
+
+        canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            z-index: 1;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px rgb(255, 255, 255); }
+            to { text-shadow: 0 0 25px rgb(255, 255, 255); }
+        }
+
+        .typing-text {
+            font-family: "Homemade Apple", cursive;
+            font-size: 24px;
+            white-space: pre-wrap;
+            border-right: 2px solid black;
+            animation: blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: black; }
+        }
+
+        .underline-animate {
+            display: inline-block;
+            position: relative;
+            color: #e75480;
+            font-weight: bold;
+        }
+
+        .underline-animate::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 4px;
+            background-color: #ffafcc;
+            border-radius: 2px;
+            animation: underlineExpand 1.2s forwards;
+        }
+
+        @keyframes underlineExpand {
+            to {
+                width: 100%;
+            }
+        }
+
+        #songbutton {
+            display: none;
+            position: fixed;
+            bottom: 350px;
+            z-index: 100;
+            background-color: #001fa9cf;
+        }
+
+        #readLetterBtn {
+            margin-top: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .music-player {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 30;
+        }
+
+        #restart {
+        position :absolute;
+        top: 2.4%;
+        font-size: 30px;
+        left:70px;
+        background-color : rgba(255,255,255,0);
+        border-color: rgba(red, green, blue, 0);}
+        audio {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        #letterRestart {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 100;
+        background-color: rgba(240, 2, 58, 0.634);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-family: VT323;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+    <button id="letterRestart" onclick="restartPage()" style="display:none;">Start Over ♻️</button>
+    <canvas id="waveCanvas"></canvas>
+    <div class="heart" id="heart">💗</div>
+    <div class="message" id="message">Hey Krishhh !!</div>
+    <button id="button" onclick="changeMessage()"> Next </button>
+    <button id="restart" onclick="restartPage()"></button>
+
+    <!-- "Tap Me" button (shown after tulips bloom) -->
+    <button class="songbutton" id="songbutton" onclick="showMusicPlayer()">🌸 Yes 🌸</button>
+
+    <!-- Letter Container -->
+    <div class="letter-container" id="letter"></div>
+
+    <!-- Music Player Screen -->
+ 
+    <div class="music-player" id="music-player">
+        <h1 style="color: white; text-shadow: 0 0 10px rgba(255,182,193,0.8);">🎶 For You 🎶</h1>
+        <audio controls id="birthdayAudio">
+            <source src="bday.m4a" type="audio/mpeg" />
+        </audio>
+        <button id="readLetterBtn" onclick="showLetter()">Digital Letter 💌?</button>
+    </div>
+
+    <audio id="bgMusic" src="blue.mp3" loop></audio>
+    <button id="muteBtn" style="position: fixed; top: 20px; left: 20px; z-index: 9999; background-color: transparent; border: none; font-size: 24px; cursor: pointer;">▶️</button>
+
+    <script>
+        
+        const messages = [
+        "How are youu??",
+        "Wait why does this day feel special?🤔.",
+        "Kuch hai kya aaj??",
+          "ohhh shitt..",
+        "What day is it???!!",
+        "12 April 2025",
+         "Here's what I really want to say...",
+        "You can pause music just in case",
+        "okay so , Ready?",
+        "xyz"
+        ];
+
+        let index = 0;
+        let tulipPositions = [];
+        let tulips = []; // Array to store tulip elements
+
+        function changeMessage() {
+            if (index < messages.length) {
+                document.getElementById("message").innerText = messages[index];
+                index++;
+            }
+            if (index === messages.length) {
+                showTulips();
+            }
+        }
+
+        function showTulips() {
+            document.getElementById("message").innerText = "";
+            document.getElementById("heart").style.display = "none";
+            document.getElementById("button").style.display = "none";
+
+            for (let i = 0; i < 50; i++) {
+                let x = Math.random() * 100;
+                let y = Math.random() * 100;
+                let size = Math.random() * 30 + 20;
+
+                let tulip = document.createElement("div");
+                tulip.classList.add("tulip");
+                tulip.innerText = "💗";
+                tulip.style.left = x + "vw";
+                tulip.style.top = y + "vh";
+                tulip.style.fontSize = size + "px";
+                document.body.appendChild(tulip);
+                tulips.push(tulip); // Store reference to tulip
+            }
+
+            // Show "Tap Me" button after tulip animation completes
+            setTimeout(() => {
+                document.getElementById("songbutton").style.display = "block";
+            }, 3000);
+        }
+
+        function showMusicPlayer() {
+            // Remove all tulips
+            tulips.forEach(tulip => {
+                if (tulip.parentNode) {
+                    tulip.parentNode.removeChild(tulip);
+                }
+            });
+            tulips = [];
+            
+            // Hide tap button
+            document.getElementById("songbutton").style.display = "none";
+            
+            // Show music player (will show over existing background)
+            document.getElementById("music-player").style.display = "flex";
+            
+            // Play the music
+            document.getElementById("birthdayAudio").play().catch(e => console.log("Auto-play prevented:", e));
+        }
+
+        function showLetter() {
+            // Hide music player
+            document.getElementById("music-player").style.display = "none";
+            
+            // Show letter with typing animation
+            document.getElementById("letter").style.display = "block";
+            typeLetter();
+        }
+
+        function restartPage() {
+            location.reload();
+        }
+
+        const letterLines = [
+            "Heyyyyy, so it's your birthday today!! 💗🎂",
+            "Happiest Birthday to youuu🥳🌼.",
+            "Toh ab tum ho Gaye ho 17 saal ke. Which means we're the same age now",
+            " so tum mujhe aunty nahi keh sakte (6 mahino tak atleast) 😼",
+            "Aur mujhe nahi pata ke kya kehna chahiye but I'm glad you exist.✨",
+            "You make my day better just by being in it💫⭐, aur I hope this new trip around the sun brings you more joy than ever.🌻 Keep being this silly, weird, 🤪insane, crazy, Tepig, Lechonk🐷, cute, amazing, sunshine kinda person.😸",
+            "And thanks for being with me :D Thoda out of topic jaa rahi hun but sometimes I miss you a lot. Like a lotttt. But Instead of saying that , i just send a random Pinterest meme or listen to Rumi tunes (the playlist you made), or just write about you.💖",
+            "I love everything you do for me, and I wish we stay together forever.",
+            "Wait—what do I mean by \"wish\"? I literally casted a spell on you. You're stuck with me for life. You ain't going nowhere. Toh jhelo mujhe ab. It's your fault vaise bhi.😾",
+            "\"Tu hoga zara pagal, tune mujhko hai chuna... kaise tune ankaha, tune ankaha sab suna?\"",
+            "I don't know what was I thinking while typing that binary message almost a year ago, but I'm glad I did.",
+            "I mean, I wasn't aware of this version of you at that time. This guy who jokes around, acts silly, shares memes also got a side of him who never gets tired of writing ESSAYS for me, who buys jhumke(i love them), who writes love letters(love them too), who buys chocolates(bohot mushkil se khaa payi thi😭), who's an Eminem fan but sings Bollywood love songs for me.😼📻",
+            "and i really loved at minecraft world you made for meee!!! 😭💗",
+            "I will always love this side of you.💖",
+            "And I know I'm dramatic and moody and don't say it often on my own, but...",
+            "I love youuuu a lot, You're mine. I'm yours.🌷💕",
+        ];
+
+     
+        // Audio visualization code
+        const canvas = document.getElementById("waveCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = 150;
+
+        const audio = document.getElementById("bgMusic");
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        const source = audioContext.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        analyser.fftSize = 256;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function drawWave() {
+            requestAnimationFrame(drawWave);
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            for (let i = 0; i < bufferLength; i++) {
+                let barHeight = dataArray[i] / 2;
+                let x = (i / bufferLength) * canvas.width;
+                ctx.fillRect(x, canvas.height - barHeight, 2, barHeight);
+            }
+            ctx.closePath();
+        }
+
+        drawWave();
+
+        const music = document.getElementById("bgMusic");
+        const muteBtn = document.getElementById("muteBtn");
+
+        muteBtn.addEventListener("click", () => {
+            if (music.paused) {
+                music.play();
+                muteBtn.textContent = "⏸️";
+            } else {
+                music.pause();
+                muteBtn.textContent = "▶️";
+            }
+        });
+
+        // Initialize with music paused
+        music.pause();
+
+        var clickerButton = document.getElementById("clicker");
+            var onButtonClick = function() {
+            clickerButton= window.location.href ="index.html";
+             };
+            clickerButton.addEventListener("click", onButtonClick);
+
+             // Modified typeLetter function
+    function typeLetter(index = 0) {
+        if (index >= letterLines.length) {
+            // Show restart button when letter completes
+            document.getElementById("letterRestart").style.display = "block";
+            return;
+        }
+        // ... rest of your existing typeLetter code ...
+        if (index >= letterLines.length) return;
+
+            const line = letterLines[index];
+            const container = document.getElementById("letter");
+            const p = document.createElement("p");
+            container.appendChild(p);
+
+            let charIndex = 0;
+            function typeChar() {
+                if (charIndex < line.length) {
+                    p.innerHTML += line[charIndex++];
+                    setTimeout(typeChar, 50);
+                } else {
+                    setTimeout(() => typeLetter(index + 1), 300);
+                }
+            }
+            typeChar();
+    }
+
+    // Enhanced restart function
+    function restartPage() {
+        // Hide all special elements
+        document.getElementById("letter").style.display = "none";
+        document.getElementById("music-player").style.display = "none";
+        document.getElementById("letterRestart").style.display = "none";
+        
+        // Clear letter content
+        document.getElementById("letter").innerHTML = "";
+        
+        // Reset to initial state
+        document.getElementById("message").innerText = "Hey Krishhh !!";
+        document.getElementById("heart").style.display = "block";
+        document.getElementById("button").style.display = "block";
+        document.getElementById("songbutton").style.display = "none";
+        
+        // Reset variables
+        index = 0;
+        tulips = [];
+        
+        // Remove any existing tulips
+        document.querySelectorAll('.tulip').forEach(tulip => tulip.remove());
+        
+        // Scroll to top and reset background
+        window.scrollTo(0, 0);
+        document.body.style.backgroundImage = 'url("night.png")';
+        
+        // Pause birthday song if playing
+        document.getElementById("birthdayAudio").pause();
+    }
+    </script>
+</body>
+</html>
